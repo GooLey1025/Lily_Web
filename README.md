@@ -1,6 +1,7 @@
 Lily_web URL: https://ec28-61-165-96-147.ngrok-free.app
+or static address: www.goley.top:5000
 
-or static address: www.goley.top:5000Updated at: 2025-04-19 20:38:44
+Updated at: 2025-04-19 20:39:47
 
 If you cannot open this URL, the server might be down.
 
