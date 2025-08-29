@@ -1,8 +1,8 @@
 Lily_web static URL: www.goley.top:1000
 
-or dynamic URL: https://931fb4a5805d.ngrok-free.app
+or dynamic URL: https://37efc6430f36.ngrok-free.app
 
-Updated at: 2025-08-28 08:13:47
+Updated at: 2025-08-29 11:33:35
 
 If you cannot open this URL, the server might be down.
 
