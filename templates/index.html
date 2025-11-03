@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BLAST 查询与染色体提取</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background: #f0f2f5;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .hero-section {
+            background: linear-gradient(135deg, #4caf50, #2196f3);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+            border-radius: 0 0 50px 50px;
+            margin-bottom: 40px;
+        }
+        .hero-section h1 {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .hero-section p {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        .card-header {
+            background: linear-gradient(135deg, #2196f3, #4caf50);
+            color: white;
+            text-align: center;
+            padding: 15px;
+            font-size: 1.5rem;
+        }
+        .form-label {
+            font-weight: bold;
+            color: #555;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #4caf50, #2196f3);
+            border: none;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #2196f3, #4caf50);
+        }
+        footer {
+            margin-top: 50px;
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            border-radius: 20px 20px 0 0;
+        }
+        footer p {
+            margin: 0;
+        }
+        /* Loading Spinner Styles */
+        #loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+        #loading .spinner-border {
+            width: 3rem;
+            height: 3rem;
+            color: #007bff;
+        }
+        @media (max-width: 768px) {
+            .hero-section h1 {
+                font-size: 2rem;
+            }
+            .hero-section p {
+                font-size: 1rem;
+            }
+            .card-header {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <h1>BLAST 比对与染色体提取</h1>
+        <p>基于兰州百合</p>
+    </div>
+
+    <div class="container">
+        <!-- 提示信息 -->
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="alert alert-warning" role="alert">
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% endwith %}
+
+        <div class="row g-4">
+            <!-- BLAST 查询卡片 -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        BLAST 查询
+                    </div>
+                    <div class="card-body">
+                        <form action="/" method="post" enctype="multipart/form-data" onsubmit="showLoading()">
+                            <div class="mb-3">
+                                <label for="query_file" class="form-label">查询文件 (标准FASTA格式) </label>
+                                <input type="file" class="form-control" id="query_file" name="query_file" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="blast_type" class="form-label">选择查询类型</label>
+                                <select class="form-select" id="blast_type" name="blast_type" required>
+                                    <option value="nucleotide">核酸 (blastn)</option>
+                                    <option value="protein">蛋白质 (blastp)</option>
+                                </select>
+                            </div>
+			    <div class="mb-3">
+                        	<label for="evalue" class="form-label">设置 E-value (确保为浮点数1e-X)</label>
+                        	<input type="text" class="form-control" id="evalue" name="evalue" value="1e-5" required>
+                        	<div class="form-text">
+                            	   例如:1e-3 (宽松), 1e-5 (常规), 1e-10 (严格)
+                        	</div>
+                    	    </div>
+                            <button type="submit" class="btn btn-primary w-100">运行 BLAST 查询</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 染色体范围提取卡片 -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        染色体范围提取
+                    </div>
+                    <div class="card-body">
+                        <form action="/" method="post" onsubmit="showLoading()">
+                            <div class="mb-3">
+                                <label for="chromosome" class="form-label">染色体</label>
+                                <input type="text" class="form-control" id="chromosome" name="chromosome" placeholder="例如：LG01" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="start" class="form-label">起始位置</label>
+                                <input type="number" class="form-control" id="start" name="start" placeholder="例如：1000" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="end" class="form-label">终止位置</label>
+                                <input type="number" class="form-control" id="end" name="end" placeholder="例如：2000" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">提取序列</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loading">
+        <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-3">程序运行中，请稍候...</p>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p> 有问题请联系:goley04@foxmail.com | Wechat:GL_yeaH</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 显示加载动画
+        function showLoading() {
+            document.getElementById('loading').style.display = 'flex';
+        }
+    </script>
+</body>
+</html>

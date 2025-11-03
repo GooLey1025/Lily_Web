@@ -1,0 +1,56 @@
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+venv/
+.env
+
+# Large files and BLAST databases
+*.fasta
+*.fai
+*.psq
+*.phr
+*.pin
+*.pdb
+*.pot
+*.pto
+*.ptf
+*.nsq
+*.nin
+*.nhr
+*.ndb
+*.ntf
+*.nto
+*.not
+*.njs
+*.nal
+
+# Specific large files
+Ldavi.chr.fasta
+lily.pep.fa
+lily_db.*
+lily_prot_db.*
+
+# Upload and output directories
+uploads/*
+outputs/*
+
+# Backup files
+*.bak 
