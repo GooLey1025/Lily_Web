@@ -13,28 +13,32 @@ output_file = args.output   # Output file with absolute positions
 with open(blast_result_file, "r") as infile, open(output_file, "w") as outfile:
     for line in infile:
         fields = line.strip().split("\t")
+        if len(fields) < 10:
+            outfile.write("\t".join(fields) + "\n")
+            continue
+
         sseqid = fields[1]  # Second column: target sequence ID
-        sstart = int(fields[8])  # Ninth column: sstart
-        send = int(fields[9])  # Tenth column: send
+        # Try to extract segmentation range from sseqid: support name:start-end or name_start-end, optional trailing ':'
+        match = re.match(r"^(.+?)[_:](\d+)-(\d+):?$", sseqid)
 
-        # Only process sseqid starting with "LG"
-        if sseqid.startswith("LG"):
-            # Extract segmentation range from sseqid
-            match = re.match(r"(\w+)_(\d+)-(\d+)", sseqid)
-            if match:
-                segment_start = int(match.group(2))  # Extract the left boundary of the segment
-                segment_end = int(match.group(3))    # Extract the right boundary of the segment
-            else:
-                segment_start = 0
-                segment_end = 0
-
+        if match:
+            segment_start = int(match.group(2))
             # Convert relative positions to absolute positions
-            absolute_sstart = sstart + segment_start
-            absolute_send = send + segment_start
+            try:
+                sstart = int(fields[8])  # Ninth column: sstart
+                send = int(fields[9])    # Tenth column: send
+            except ValueError:
+                outfile.write("\t".join(fields) + "\n")
+                continue
 
-            # Replace relative positions with absolute positions
+            # seqkit subseq headers typically report 1-based inclusive coordinates in the suffix
+            # Convert relative (1-based) BLAST positions by adding (segment_start - 1)
+            offset = segment_start - 1
+            absolute_sstart = sstart + offset
+            absolute_send = send + offset
+
             fields[8] = str(absolute_sstart)
             fields[9] = str(absolute_send)
 
-        # Write updated line to the output file (LG updated, others unchanged)
+        # Write updated line to the output file (updated when segment suffix present)
         outfile.write("\t".join(fields) + "\n")

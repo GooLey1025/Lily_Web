@@ -1,0 +1,68 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>LilyBlast</title>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <h1>LilyBlast</h1>
+    <section>
+      <h2>BLASTN</h2>
+      <form id="form-blastn">
+        <input type="file" name="file" accept=".fa,.fasta,.txt" required />
+        <button type="submit">Run blastn</button>
+      </form>
+      <div id="loading-blastn" class="loading-message" style="display:none;">
+        <span class="spinner"></span> Running BLASTN, please wait...
+      </div>
+      <div id="error-blastn" class="error-message" style="display:none;"></div>
+      <div>
+        <a id="dl-blastn" href="#" style="display:none;">Download original results (txt)</a>
+      </div>
+      <table id="table-blastn" class="display" style="width:100%"></table>
+    </section>
+
+    <section>
+      <h2>BLASTP</h2>
+      <form id="form-blastp">
+        <input type="file" name="file" accept=".fa,.fasta,.txt" required />
+        <button type="submit">Run blastp</button>
+      </form>
+      <div id="loading-blastp" class="loading-message" style="display:none;">
+        <span class="spinner"></span> Running BLASTP, please wait...
+      </div>
+      <div id="error-blastp" class="error-message" style="display:none;"></div>
+      <div>
+        <a id="dl-blastp" href="#" style="display:none;">Download original results (txt)</a>
+      </div>
+      <table id="table-blastp" class="display" style="width:100%"></table>
+    </section>
+
+    <section>
+      <h2>Subseq (Chromosome extract)</h2>
+      <form id="form-subseq">
+        <input type="text" name="chromosome" placeholder="LG01" required />
+        <input type="number" name="start" min="1" placeholder="起点(1-based)" required />
+        <input type="number" name="end" min="1" placeholder="终点(1-based)" required />
+        <button type="submit">Extract</button>
+      </form>
+      <div id="loading-subseq" class="loading-message" style="display:none;">
+        <span class="spinner"></span> Extracting sequence, please wait...
+      </div>
+      <div id="error-subseq" class="error-message" style="display:none;"></div>
+      <div>
+        <a id="dl-subseq" href="#" style="display:none;">Download user.fa</a>
+      </div>
+    </section>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>
+
+
